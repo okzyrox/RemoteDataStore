@@ -7,7 +7,7 @@
 local HttpService = game:GetService("HttpService")
 
 local module = {}
-module.settings = require("module/settings") -- ?
+module.settings = require(script.settings) -- ?
 
 local function serverIsUp()
     if HttpService.HttpEnabled == false then
