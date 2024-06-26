@@ -7,7 +7,7 @@
 local HttpService = game:GetService("HttpService")
 
 local module = {}
-module.settings = require(script.settings)
+module.settings = require("module/settings") -- ?
 
 local function serverIsUp()
     if HttpService.HttpEnabled == false then
@@ -30,6 +30,8 @@ local function serverIsUp()
 
     if data["alive"] then
         return true
+    else
+        return "Server is down?"
     end
 end
 
@@ -43,16 +45,49 @@ function MakeRequest(request_type, location, headers, data)
     if headers == nil then headers = {} end
     headers["API_KEY"] = module.settings["serverKey"]
 
-    if data == nil then data = {} end
-
     if request_type == "GET" then
+        return HttpService:GetAsync(location, headers)
+    elseif request_type == "POST" then
+        return HttpService:PostAsync(location, data, Enum.HttpContentType.ApplicationJson, headers)
+    else
+        return "Invalid request type"
     end
 end
 
-function module:GetAsync(key)
-    local headers = {}
-    local data = {}
-    if module.alive == true then
-        MakeRequest("GET", "/storage/" .. module.settings["gameId"] .. "?key=" .. key)
+function module:GetDatastore(name)
+    local datastore = {}
+    datastore.path = module.settings["serverIp"] .. "/datastore/" .. name
+
+    function datastore:GetAsync(key)
+        local response
+	    local data
+
+        pcall(function()
+            response = MakeRequest("GET", self.path .. "/get/" .. key, {})
+            data = HttpService:JSONDecode(response)
+        end)
+
+        if not data then
+            warn("No response from server. Is the server turned on?")
+            return nil
+        end
+
+        if response == nil or data == nil then
+            return nil
+        else
+            return data
+        end
     end
+
+    function datastore:SetAsync(key, value)
+        local response
+        
+        pcall(function()
+            response = MakeRequest("GET", self.path .. "/set/" .. key .. "/" .. value, {})
+        end)
+        
+        return response
+    end
+
+    return datastore
 end
