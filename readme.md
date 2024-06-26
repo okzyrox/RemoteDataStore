@@ -42,4 +42,5 @@ Set a key to a new value:
 # Credit:
 
 Creator: @okzyrox
+If you use this library, I ask that you give me credit somewhere within your game. Can just be the name of this module or my name.
 License: MIT
