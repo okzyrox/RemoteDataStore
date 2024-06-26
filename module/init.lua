@@ -19,7 +19,7 @@ local function serverIsUp()
 	local data
 
 	pcall(function()
-		response = HttpService:GetAsync(module.settings["serverIp"])
+		response = HttpService:GetAsync(module.settings["serverIp"] .. "/hb")
 		data = HttpService:JSONDecode(response)
 	end)
 

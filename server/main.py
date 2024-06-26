@@ -11,6 +11,11 @@ manager = datastore.DatastoreManager(
     "TESTKEY"
 )
 
+@app.route("/hb", methods=["GET"])
+def heartbeat():
+
+    return json.dumps({"alive": True})
+
 @app.route("/datastore/<ds_name>/all", methods=["GET"])
 def get_all_datastore(ds_name):
     if not ds_name:
