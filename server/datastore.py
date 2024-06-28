@@ -26,7 +26,6 @@ class Datastore:
             data = json.load(file) 
             if data[key]:
                 constructed = f"{{ \"value\": \"{data[key]}\" }}"
-                print(constructed)
                 return json.loads(constructed)                
 
 class DatastoreManager:

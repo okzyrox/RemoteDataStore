@@ -31,16 +31,17 @@ local function serverIsUp()
     if data["alive"] then
         return true
     else
-        return "Server is down?"
+        warn("Server is not alive")
+        return false
     end
 end
 
 module.alive = serverIsUp()
 
 function MakeRequest(request_type, location, headers, data)
+    assert(location ~= nil, "Invalid request location")
+
     if request_type == nil then request_type = "GET" end
-    
-    assert(location ~= nil, "Location is nil")
     
     if headers == nil then headers = {} end
     headers["API_KEY"] = module.settings["serverKey"]
@@ -50,11 +51,14 @@ function MakeRequest(request_type, location, headers, data)
     elseif request_type == "POST" then
         return HttpService:PostAsync(location, data, Enum.HttpContentType.ApplicationJson, headers)
     else
-        return "Invalid request type"
+        warn("Invalid request type")
+        return nil
     end
 end
 
 function module:GetDatastore(name)
+    assert(name ~= nil, "Datastore name provided is invalid")
+
     local datastore = {}
     datastore.path = module.settings["serverIp"] .. "/datastore/" .. name
 
@@ -80,6 +84,10 @@ function module:GetDatastore(name)
     end
 
     function datastore:SetAsync(key, value)
+        assert(key ~= nil, "Key is nil")
+        assert(value ~= nil, "Value is nil")
+        assert(type(key) == "string", "Key is invalid")
+
         local response
         
         pcall(function()
